@@ -6,13 +6,13 @@
         <Nullable>enable</Nullable>
         <Version>1.0.0</Version>
         <Authors>Samuel Lucas</Authors>
-        <Description>A .NET implementation of Ascon-128, Ascon-128a, and Ascon-80pq.</Description>
+        <Description>A .NET implementation of the Ascon cipher suite, which includes Ascon-128, Ascon-128a, Ascon-80pq, Ascon-Hash, Ascon-Xof, Ascon-Hasha, Ascon-Xofa, Ascon-Prf, Ascon-Mac, Ascon-Prfa, Ascon-Maca, and Ascon-PrfShort.</Description>
         <Copyright>Copyright (c) 2023 Samuel Lucas</Copyright>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/samuel-lucas6/Ascon.NET</PackageProjectUrl>
         <RepositoryUrl>https://github.com/samuel-lucas6/Ascon.NET</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
-        <PackageTags>ascon ascon-128 ascon-128a ascon-80pq aead</PackageTags>
+        <PackageTags>ascon ascon-128 ascon-128a ascon-80pq ascon-hash ascon-xof ascon-hasha ascon-xofa ascon-prf ascon-mac ascon-prfa ascon-maca ascon-prfshort aead hash xof prf mac</PackageTags>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     </PropertyGroup>
 
