@@ -69,7 +69,7 @@ public static class AsconPrf
 
     public static bool VerifyTag(ReadOnlySpan<byte> tag, ReadOnlySpan<byte> message, ReadOnlySpan<byte> key, bool macMode = false)
     {
-        Span<byte> computedTag = stackalloc byte[tag.Length];
+        Span<byte> computedTag = new byte[tag.Length];
         ComputeTag(computedTag, message, key, macMode);
         bool valid = CryptographicOperations.FixedTimeEquals(tag, computedTag);
         CryptographicOperations.ZeroMemory(computedTag);
