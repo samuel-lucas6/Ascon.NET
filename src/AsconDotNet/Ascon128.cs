@@ -1,5 +1,6 @@
 ﻿using System.Buffers.Binary;
 using System.Security.Cryptography;
+using System.Runtime.CompilerServices;
 
 namespace AsconDotNet;
 
@@ -9,7 +10,6 @@ public static class Ascon128
     public const int NonceSize = 16;
     public const int TagSize = 16;
     private const int Rate = 8;
-
     private static ulong x0, x1, x2, x3, x4;
 
     public static void Encrypt(Span<byte> ciphertext, ReadOnlySpan<byte> plaintext, ReadOnlySpan<byte> nonce, ReadOnlySpan<byte> key, ReadOnlySpan<byte> associatedData = default)
@@ -73,6 +73,7 @@ public static class Ascon128
         x4 ^= k1;
         BinaryPrimitives.WriteUInt64BigEndian(ciphertext[^TagSize..^(TagSize / 2)], x3);
         BinaryPrimitives.WriteUInt64BigEndian(ciphertext[^(TagSize / 2)..], x4);
+        ZeroState();
         CryptographicOperations.ZeroMemory(padding);
     }
 
@@ -143,6 +144,7 @@ public static class Ascon128
         BinaryPrimitives.WriteUInt64BigEndian(tag[8..], x4);
 
         bool valid = CryptographicOperations.FixedTimeEquals(tag, ciphertext[^TagSize..]);
+        ZeroState();
         CryptographicOperations.ZeroMemory(tag);
         CryptographicOperations.ZeroMemory(padding);
 
@@ -171,5 +173,11 @@ public static class Ascon128
             x3 ^= ulong.RotateRight(x3, 10) ^ ulong.RotateRight(x3, 17);
             x4 ^= ulong.RotateRight(x4, 7) ^ ulong.RotateRight(x4, 41);
         }
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
+    private static void ZeroState()
+    {
+        x0 = 0; x1 = 0; x2 = 0; x3 = 0; x4 = 0;
     }
 }
