@@ -297,7 +297,7 @@ public class AsconHashingTests
     [DynamicData(nameof(XofTestVectors), DynamicDataSourceType.Method)]
     [DynamicData(nameof(HashaTestVectors), DynamicDataSourceType.Method)]
     [DynamicData(nameof(XofaTestVectors), DynamicDataSourceType.Method)]
-    public void IncrementalHash_Valid(bool xof, bool aVariant, string hash, string message)
+    public void Incremental_Valid(bool xof, bool aVariant, string hash, string message)
     {
         Span<byte> h = stackalloc byte[hash.Length / 2];
         Span<byte> m = Convert.FromHexString(message);

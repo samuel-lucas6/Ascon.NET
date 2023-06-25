@@ -1,5 +1,6 @@
 ﻿using System.Buffers.Binary;
 using System.Security.Cryptography;
+using System.Runtime.CompilerServices;
 
 namespace AsconDotNet;
 
@@ -12,13 +13,13 @@ public static class AsconPrfShort
 
     public static void DeriveKey(Span<byte> output, ReadOnlySpan<byte> input, ReadOnlySpan<byte> key)
     {
-        if (output.Length is > OutputSize or 0) { throw new ArgumentOutOfRangeException(nameof(output), output.Length, $"{nameof(output)} must be between 1 and {OutputSize} bytes long."); }
+        if (output.Length is 0 or > OutputSize) { throw new ArgumentOutOfRangeException(nameof(output), output.Length, $"{nameof(output)} must be between 1 and {OutputSize} bytes long."); }
         if (input.Length > InputSize) { throw new ArgumentOutOfRangeException(nameof(input), input.Length, $"{nameof(input)} must be equal to or less than {InputSize} bytes long."); }
         if (key.Length != KeySize) { throw new ArgumentOutOfRangeException(nameof(key), key.Length, $"{nameof(key)} must be {KeySize} bytes long."); }
 
         Span<byte> iv = stackalloc byte[8];
         iv.Clear();
-        iv[0] = (byte)(key.Length * 8);
+        iv[0] = KeySize * 8;
         iv[1] = (byte)(input.Length * 8);
         iv[2] = 64 + 12;
         iv[3] = (byte)(output.Length * 8);
@@ -43,7 +44,7 @@ public static class AsconPrfShort
         BinaryPrimitives.WriteUInt64BigEndian(padding[..8], x3);
         BinaryPrimitives.WriteUInt64BigEndian(padding[8..], x4);
         padding[..output.Length].CopyTo(output);
-        x0 = 0; x1 = 0; x2 = 0; x3 = 0; x4 = 0;
+        ZeroState();
         CryptographicOperations.ZeroMemory(padding);
     }
 
@@ -66,5 +67,11 @@ public static class AsconPrfShort
             x3 ^= ulong.RotateRight(x3, 10) ^ ulong.RotateRight(x3, 17);
             x4 ^= ulong.RotateRight(x4, 7) ^ ulong.RotateRight(x4, 41);
         }
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
+    private static void ZeroState()
+    {
+        x0 = 0; x1 = 0; x2 = 0; x3 = 0; x4 = 0;
     }
 }

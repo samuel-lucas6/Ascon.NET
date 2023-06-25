@@ -46,18 +46,20 @@ public sealed class AsconHashing : IDisposable
         int i = 0;
         if (_bytesBuffered != 0 && _bytesBuffered + message.Length >= Rate) {
             Span<byte> b = _buffer.AsSpan();
-            message[..(Rate - _bytesBuffered)].CopyTo(b[_bytesBuffered..]);
+            message[..(b.Length - _bytesBuffered)].CopyTo(b[_bytesBuffered..]);
             x0 ^= BinaryPrimitives.ReadUInt64BigEndian(b);
             Permutation(_bRounds);
-            i += Rate - _bytesBuffered;
+            i += b.Length - _bytesBuffered;
             _bytesBuffered = 0;
             b.Clear();
         }
+
         while (i + Rate <= message.Length) {
             x0 ^= BinaryPrimitives.ReadUInt64BigEndian(message.Slice(i, Rate));
             Permutation(_bRounds);
             i += Rate;
         }
+
         if (message.Length % Rate != 0) {
             message[i..].CopyTo(_buffer.AsSpan()[_bytesBuffered..]);
             _bytesBuffered += message.Length - i;
